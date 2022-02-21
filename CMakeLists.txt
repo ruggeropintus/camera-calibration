@@ -100,6 +100,28 @@ endforeach()
 ##### @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ #####
 
 #############################################################
+##### EXE FIND CHESSBOARD CORNERS ###########################
+#############################################################
+
+ADD_EXECUTABLE ( find_chessboard_corners
+     src/exe_find_chessboard_corners/main_find_chessboard_corners.cpp
+	 src/exe_find_chessboard_corners/main_find_chessboard_corners.hpp
+	 src/exe_find_chessboard_corners/find_chessboard_corners_error_handler.hpp
+	 src/exe_find_chessboard_corners/find_chessboard_corners_error_handler.cpp
+)
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+	set_target_properties(find_chessboard_corners PROPERTIES LINKER_LANGUAGE CXX)
+	target_compile_options(find_chessboard_corners PRIVATE -Wno-deprecated-enum-enum-conversion -Wno-deprecated-copy -Werror -Wall -Wextra)
+endif()
+
+TARGET_LINK_LIBRARIES( find_chessboard_corners
+     ${OpenCV_LIBRARIES}
+)
+
+install (TARGETS find_chessboard_corners DESTINATION ${INSTALL_BIN_DIR})
+
+#############################################################
 ##### SANDBOX ###############################################
 #############################################################
 
