@@ -10,17 +10,20 @@ FindChessboardCornersErrorHandler::FindChessboardCornersErrorHandler(
 }
 
 void FindChessboardCornersErrorHandler::checkArgCount() const {
-	if (m_argc != 2) {
+	if (m_argc != 4) {
 		std::cout << RED_BOLD_TEXT("ERROR: wrong number of arguments!!!")
-				  << " (argc != 2)" << std::endl;
+				  << " (argc != 4)" << std::endl;
 		showUsageAndExit();
 	}
 }
 
 void FindChessboardCornersErrorHandler::showUsageAndExit() const {
 	std::cout << "\n\t----------------" << std::endl;
-	std::cout << "\tUsage: " << m_argv[0] << " <image.xxx>" << std::endl;
-	std::cout << "\tExample: " << m_argv[0] << " DSC_1778.jpg" << std::endl;
+	std::cout << "\tUsage: " << m_argv[0]
+			  << " <image.xxx> <inner_corners_width> <inner_corners_height>"
+			  << std::endl;
+	std::cout << "\tExample: " << m_argv[0] << " DSC_1778.jpg 14 7"
+			  << std::endl;
 	std::cout << "\t----------------\n" << std::endl;
 	exit(1);
 }
@@ -28,6 +31,16 @@ void FindChessboardCornersErrorHandler::showUsageAndExit() const {
 void FindChessboardCornersErrorHandler::isOpen(const cv::Mat& image) const {
 	if (image.data == NULL) {
 		std::cout << RED_BOLD_TEXT("ERROR: unable to read image!!!")
+				  << std::endl;
+		showUsageAndExit();
+	}
+}
+
+void FindChessboardCornersErrorHandler::areCornersFound(
+	const bool cornersFound) const {
+	if (!cornersFound) {
+		std::cout << RED_BOLD_TEXT(
+						 "ERROR: unable to find chessboard corners!!!")
 				  << std::endl;
 		showUsageAndExit();
 	}

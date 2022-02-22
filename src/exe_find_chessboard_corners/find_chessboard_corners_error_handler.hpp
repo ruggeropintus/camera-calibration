@@ -10,6 +10,7 @@ class FindChessboardCornersErrorHandler {
 	FindChessboardCornersErrorHandler(int argc, const char** argv);
 
 	void isOpen(const cv::Mat& image) const;
+	void areCornersFound(const bool cornersFound) const;
 
    private:
 	void checkArgCount() const;
