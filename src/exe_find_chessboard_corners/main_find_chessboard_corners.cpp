@@ -5,14 +5,16 @@ int main(int argc, char** argv) {
 		argc, const_cast<const char**>(argv));
 	errorHandlerPtr = &findChessboardCornersErrorHandler;
 
-	const char* inputFName = argv[1];
-	const cv::Size chessboardSize(std::atoi(argv[2]), std::atoi(argv[3]));
+	ChessboardData chessboardData;
 
-	const cv::Mat chessboardCorners =
-		findChessboardCorners(inputFName, chessboardSize);
+	chessboardData.fName = argv[1];
+	chessboardData.image = readImage(argv[1]);
+	chessboardData.size = cv::Size(std::atoi(argv[2]), std::atoi(argv[3]));
+	chessboardData.corners =
+		findChessboardCorners(chessboardData.image, chessboardData.size);
 
-	exportChessboardCorners(inputFName, chessboardSize, chessboardCorners);
-	exportChessboardCornersImage(inputFName, chessboardSize, chessboardCorners);
+	exportChessboardCorners(chessboardData);
+	exportChessboardCornersImage(chessboardData);
 
 	return 0;
 }
