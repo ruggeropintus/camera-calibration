@@ -100,6 +100,28 @@ endforeach()
 ##### @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ #####
 
 #############################################################
+##### EXE CALIBRATE CAMERA ##################################
+#############################################################
+
+ADD_EXECUTABLE ( calibrate_camera
+     src/exe_calibrate_camera/main_calibrate_camera.cpp
+	 src/exe_calibrate_camera/main_calibrate_camera.hpp
+	 src/exe_calibrate_camera/calibrate_camera_error_handler.hpp
+	 src/exe_calibrate_camera/calibrate_camera_error_handler.cpp
+)
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+	set_target_properties(calibrate_camera PROPERTIES LINKER_LANGUAGE CXX)
+	target_compile_options(calibrate_camera PRIVATE -Wno-deprecated-enum-enum-conversion -Wno-deprecated-copy -Werror -Wall -Wextra)
+endif()
+
+TARGET_LINK_LIBRARIES( calibrate_camera
+     ${OpenCV_LIBRARIES}
+)
+
+install (TARGETS calibrate_camera DESTINATION ${INSTALL_BIN_DIR})
+
+#############################################################
 ##### EXE FIND CHESSBOARD CORNERS ###########################
 #############################################################
 
