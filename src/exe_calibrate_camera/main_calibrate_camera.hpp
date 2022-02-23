@@ -8,7 +8,8 @@
 #include <opencv2/calib3d.hpp>
 #include <opencv2/core.hpp>
 
-const std::size_t PRECISION = std::numeric_limits<double>::max_digits10;
+#define PRECISION() \
+	std::fixed << std::setprecision(std::numeric_limits<double>::max_digits10)
 
 struct CameraCalibrationData {
 	cv::Size imageSize;
@@ -133,15 +134,14 @@ void exportIntrinsics(const CameraCalibrationData& cameraCalibrationData) {
 
 	for (int i = 0; i < 3; ++i) {
 		for (int j = 0; j < 3; ++j) {
-			ofs << std::fixed << std::setprecision(PRECISION)
+			ofs << PRECISION()
 				<< cameraCalibrationData.cameraMatrix.at<double>(i, j);
 			ofs << ((j == 2) ? '\n' : ' ');
 		}
 	}
 
 	for (int i = 0; i < cameraCalibrationData.distCoeffs.size().width; ++i) {
-		ofs << std::fixed << std::setprecision(PRECISION)
-			<< cameraCalibrationData.distCoeffs.at<double>(0, i);
+		ofs << PRECISION() << cameraCalibrationData.distCoeffs.at<double>(0, i);
 		ofs << ((i == cameraCalibrationData.distCoeffs.size().width - 1) ? '\n'
 																		 : ' ');
 	}
@@ -159,10 +159,10 @@ void exportExtrinsics(const CameraCalibrationData& cameraCalibrationData) {
 	std::cout << cameraCalibrationData.rvecs.type() << std::endl;
 	std::cout << cameraCalibrationData.tvecs.type() << std::endl;
 
-	std::cout << std::fixed << std::setprecision(PRECISION)
-			  << cameraCalibrationData.rvecs.at<cv::Vec3d>(0, 0) << std::endl;
-	std::cout << std::fixed << std::setprecision(PRECISION)
-			  << cameraCalibrationData.tvecs.at<cv::Vec3d>(0, 0) << std::endl;
+	std::cout << PRECISION() << cameraCalibrationData.rvecs.at<cv::Vec3d>(0, 0)
+			  << std::endl;
+	std::cout << PRECISION() << cameraCalibrationData.tvecs.at<cv::Vec3d>(0, 0)
+			  << std::endl;
 	// TODO: implement me
 }
 

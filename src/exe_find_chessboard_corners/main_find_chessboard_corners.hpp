@@ -2,9 +2,14 @@
 
 #include <exe_find_chessboard_corners/find_chessboard_corners_error_handler.hpp>
 #include <fstream>
+#include <iomanip>
+#include <limits>
 #include <opencv2/calib3d.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
+
+#define PRECISION() \
+	std::fixed << std::setprecision(std::numeric_limits<float>::max_digits10)
 
 struct ChessboardData {
 	const char* fName = nullptr;
@@ -63,7 +68,7 @@ void exportChessboardCorners(const ChessboardData& chessboardData) {
 		<< std::endl;
 
 	for (int i = 0; i < cornersCount; ++i) {
-		ofs << chessboardData.corners.ptr<float>(i)[0] << " "
+		ofs << PRECISION() << chessboardData.corners.ptr<float>(i)[0] << " "
 			<< chessboardData.corners.ptr<float>(i)[1] << std::endl;
 	}
 
