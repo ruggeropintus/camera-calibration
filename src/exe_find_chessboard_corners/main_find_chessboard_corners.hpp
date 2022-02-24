@@ -58,6 +58,7 @@ void exportChessboardCorners(const ChessboardData& chessboardData) {
 	const int cornersCount = chessboardData.corners.size().height;
 
 	std::fstream ofs(outputFName, std::fstream::out);
+	ofs << PRECISION();
 
 	ofs << "#width height sharpness" << std::endl;
 	ofs << chessboardData.size.width << " " << chessboardData.size.height
@@ -68,7 +69,7 @@ void exportChessboardCorners(const ChessboardData& chessboardData) {
 		<< std::endl;
 
 	for (int i = 0; i < cornersCount; ++i) {
-		ofs << PRECISION() << chessboardData.corners.ptr<float>(i)[0] << " "
+		ofs << chessboardData.corners.ptr<float>(i)[0] << " "
 			<< chessboardData.corners.ptr<float>(i)[1] << std::endl;
 	}
 

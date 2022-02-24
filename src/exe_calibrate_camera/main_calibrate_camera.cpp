@@ -19,8 +19,8 @@ int main(int argc, char** argv) {
 	calibrateCamera(cameraCalibrationData, chessboardViewsData);
 
 	exportIntrinsics(cameraCalibrationData);
-	exportExtrinsics(cameraCalibrationData);
-	exportStatistics(cameraCalibrationData);
+	exportExtrinsics(cameraCalibrationData, chessboardViewsData);
+	exportErrorStatistics(cameraCalibrationData, chessboardViewsData);
 
 	return 0;
 }

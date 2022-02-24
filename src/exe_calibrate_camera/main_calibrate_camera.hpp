@@ -41,8 +41,15 @@ std::vector<std::vector<cv::Vec2f>> computeImage2DPoints(
 std::vector<cv::Vec2f> loadChessboardCorners(
 	const ChessboardViewsData& chessboardViewsData, const int viewIdx);
 void exportIntrinsics(const CameraCalibrationData& cameraCalibrationData);
-void exportExtrinsics(const CameraCalibrationData& cameraCalibrationData);
-void exportStatistics(const CameraCalibrationData& cameraCalibrationData);
+void exportExtrinsics(const CameraCalibrationData& cameraCalibrationData,
+					  const ChessboardViewsData& chessboardViewsData);
+void exportErrorStatistics(const CameraCalibrationData& cameraCalibrationData,
+						   const ChessboardViewsData& chessboardViewsData);
+void exportIntrinsicsErrStats(
+	const CameraCalibrationData& cameraCalibrationData);
+void exportExtrinsicsErrStats(
+	const CameraCalibrationData& cameraCalibrationData,
+	const ChessboardViewsData& chessboardViewsData);
 std::string getOutputFName(const std::string_view& strView,
 						   const std::string_view& suffixView,
 						   const std::string_view& extView);
@@ -131,17 +138,17 @@ void exportIntrinsics(const CameraCalibrationData& cameraCalibrationData) {
 	const std::string outputFName = "intrinsics.txt";
 
 	std::fstream ofs(outputFName, std::fstream::out);
+	ofs << PRECISION();
 
 	for (int i = 0; i < 3; ++i) {
 		for (int j = 0; j < 3; ++j) {
-			ofs << PRECISION()
-				<< cameraCalibrationData.cameraMatrix.at<double>(i, j);
+			ofs << cameraCalibrationData.cameraMatrix.at<double>(i, j);
 			ofs << ((j == 2) ? '\n' : ' ');
 		}
 	}
 
 	for (int i = 0; i < cameraCalibrationData.distCoeffs.size().width; ++i) {
-		ofs << PRECISION() << cameraCalibrationData.distCoeffs.at<double>(0, i);
+		ofs << cameraCalibrationData.distCoeffs.at<double>(0, i);
 		ofs << ((i == cameraCalibrationData.distCoeffs.size().width - 1) ? '\n'
 																		 : ' ');
 	}
@@ -152,22 +159,96 @@ void exportIntrinsics(const CameraCalibrationData& cameraCalibrationData) {
 	ofs.close();
 }
 
-void exportExtrinsics(const CameraCalibrationData& cameraCalibrationData) {
-	std::cout << cameraCalibrationData.rvecs.size() << std::endl;
-	std::cout << cameraCalibrationData.tvecs.size() << std::endl;
+void exportExtrinsics(const CameraCalibrationData& cameraCalibrationData,
+					  const ChessboardViewsData& chessboardViewsData) {
+	const std::string outputFName = "extrinsics.txt";
 
-	std::cout << cameraCalibrationData.rvecs.type() << std::endl;
-	std::cout << cameraCalibrationData.tvecs.type() << std::endl;
+	std::fstream ofs(outputFName, std::fstream::out);
+	ofs << PRECISION();
 
-	std::cout << PRECISION() << cameraCalibrationData.rvecs.at<cv::Vec3d>(0, 0)
-			  << std::endl;
-	std::cout << PRECISION() << cameraCalibrationData.tvecs.at<cv::Vec3d>(0, 0)
-			  << std::endl;
-	// TODO: implement me
+	ofs << chessboardViewsData.viewsCount << std::endl;
+
+	for (std::size_t viewIdx = 0; viewIdx < chessboardViewsData.viewsCount;
+		 ++viewIdx) {
+		ofs << chessboardViewsData.viewsFNames[viewIdx] << " ";
+		for (int j = 0; j < 3; ++j)
+			ofs << cameraCalibrationData.rvecs.ptr<double>(viewIdx)[j] << " ";
+		for (int j = 0; j < 3; ++j)
+			ofs << cameraCalibrationData.tvecs.ptr<double>(viewIdx)[j] << " ";
+		ofs << std::endl;
+	}
+
+	ofs.close();
 }
 
-void exportStatistics(const CameraCalibrationData& /*cameraCalibrationData*/) {
-	// TODO: implement me
+void exportErrorStatistics(const CameraCalibrationData& cameraCalibrationData,
+						   const ChessboardViewsData& chessboardViewsData) {
+	exportIntrinsicsErrStats(cameraCalibrationData);
+	exportExtrinsicsErrStats(cameraCalibrationData, chessboardViewsData);
+}
+
+void exportIntrinsicsErrStats(
+	const CameraCalibrationData& cameraCalibrationData) {
+	const std::string outputFName = "intrinsics_stats.txt";
+
+	std::fstream ofs(outputFName, std::fstream::out);
+	ofs << PRECISION();
+
+	cv::Mat cameraMatrixStd(3, 3, CV_64FC1);
+	cameraMatrixStd.setTo(0.0);
+	cameraMatrixStd.at<double>(0, 0) =
+		cameraCalibrationData.stdDeviationsIntrinsics.at<double>(0, 0);
+	cameraMatrixStd.at<double>(1, 1) =
+		cameraCalibrationData.stdDeviationsIntrinsics.at<double>(1, 0);
+	cameraMatrixStd.at<double>(0, 2) =
+		cameraCalibrationData.stdDeviationsIntrinsics.at<double>(2, 0);
+	cameraMatrixStd.at<double>(1, 2) =
+		cameraCalibrationData.stdDeviationsIntrinsics.at<double>(3, 0);
+	for (int i = 0; i < 3; ++i) {
+		for (int j = 0; j < 3; ++j) {
+			ofs << cameraMatrixStd.at<double>(i, j);
+			ofs << ((j == 2) ? '\n' : ' ');
+		}
+	}
+
+	for (int i = 0; i < cameraCalibrationData.distCoeffs.size().width; ++i) {
+		ofs << cameraCalibrationData.stdDeviationsIntrinsics.at<double>(i + 4,
+																		0);
+		ofs << ((i == cameraCalibrationData.distCoeffs.size().width - 1) ? '\n'
+																		 : ' ');
+	}
+
+	ofs.close();
+}
+
+void exportExtrinsicsErrStats(
+	const CameraCalibrationData& cameraCalibrationData,
+	const ChessboardViewsData& chessboardViewsData) {
+	const std::string outputFName = "extrinsics_stats.txt";
+
+	std::fstream ofs(outputFName, std::fstream::out);
+	ofs << PRECISION();
+
+	ofs << "#viewCount totalReprojectionError" << std::endl;
+	ofs << chessboardViewsData.viewsCount << " "
+		<< cameraCalibrationData.rmsRProjError << std::endl;
+
+	ofs << "#imageName perViewError stdRVec stdTVec" << std::endl;
+
+	std::size_t count = 0;
+	for (std::size_t viewIdx = 0; viewIdx < chessboardViewsData.viewsCount;
+		 ++viewIdx) {
+		ofs << chessboardViewsData.viewsFNames[viewIdx] << " ";
+		ofs << cameraCalibrationData.perViewErrors.at<double>(viewIdx, 0)
+			<< " ";
+		for (int j = 0; j < 6; ++j)
+			ofs << cameraCalibrationData.stdDeviationsExtrinsics.at<double>(
+					   count++, 0)
+				<< " ";
+		ofs << std::endl;
+	}
+
+	ofs.close();
 }
 
 std::string getOutputFName(const std::string_view& strView,
