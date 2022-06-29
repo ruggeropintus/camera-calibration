@@ -28,19 +28,11 @@ void FindChessboardCornersErrorHandler::showUsageAndExit() const {
 	exit(1);
 }
 
-void FindChessboardCornersErrorHandler::isOpen(const cv::Mat& image) const {
-	if (image.data == NULL) {
-		std::cout << RED_BOLD_TEXT("ERROR: unable to read image!!!")
-				  << std::endl;
-		showUsageAndExit();
-	}
-}
-
-void FindChessboardCornersErrorHandler::areCornersFound(
-	const bool cornersFound) const {
-	if (!cornersFound) {
+void FindChessboardCornersErrorHandler::isChessboardPatternOK(
+	const bool isOk) const {
+	if (!isOk) {
 		std::cout << RED_BOLD_TEXT(
-						 "ERROR: unable to find chessboard corners!!!")
+						 "ERROR: unable to create chessboard pattern!!!")
 				  << std::endl;
 		showUsageAndExit();
 	}
