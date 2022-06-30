@@ -74,6 +74,8 @@ endforeach()
 ADD_LIBRARY(camera_calibration # SHARED
 	src/camera_calibration/chessboard_pattern.hpp
 	src/camera_calibration/chessboard_pattern.cpp
+	src/camera_calibration/camera_calibration.hpp
+	src/camera_calibration/camera_calibration.cpp
 )
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")

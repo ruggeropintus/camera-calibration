@@ -5,22 +5,18 @@ int main(int argc, char** argv) {
 		argc, const_cast<const char**>(argv));
 	errorHandlerPtr = &calibrateCameraErrorHandler;
 
-	CameraCalibrationData cameraCalibrationData;
-	ChessboardViewsData chessboardViewsData;
+	CameraCalibration cameraCalibration;
 
-	cameraCalibrationData.imageSize =
-		cv::Size(std::atoi(argv[1]), std::atoi(argv[2]));
-	chessboardViewsData.chessboardSize =
-		cv::Size(std::atoi(argv[3]), std::atoi(argv[4]));
-	chessboardViewsData.squareSize = std::atof(argv[5]);
-	chessboardViewsData.viewsCount = argc - 6;
-	chessboardViewsData.viewsFNames = const_cast<const char**>(&argv[6]);
+	cameraCalibration.setImageSize(
+		cv::Size(std::atoi(argv[1]), std::atoi(argv[2])));
+	cameraCalibration.setChessboardPatternSize(
+		cv::Size(std::atoi(argv[3]), std::atoi(argv[4])));
+	cameraCalibration.setChessboardPatternSquareSize(std::atof(argv[5]));
+	cameraCalibration.loadChessboardPatterns(const_cast<const char**>(&argv[7]),
+											 argc - 7);
 
-	calibrateCamera(cameraCalibrationData, chessboardViewsData);
-
-	exportIntrinsics(cameraCalibrationData);
-	exportExtrinsics(cameraCalibrationData, chessboardViewsData);
-	exportErrorStatistics(cameraCalibrationData, chessboardViewsData);
+	cameraCalibration.run();
+	cameraCalibration.exportCalibration(argv[6]);
 
 	return 0;
 }

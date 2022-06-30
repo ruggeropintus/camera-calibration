@@ -90,4 +90,9 @@ void ChessboardPattern::clear() {
 	m_CornersFound = false;
 }
 
+cv::Vec2f ChessboardPattern::getCorner(const std::size_t idx) const {
+	return cv::Vec2f(m_Corners.ptr<float>(idx)[0],
+					 m_Corners.ptr<float>(idx)[1]);
+}
+
 }  // namespace camera_calibration

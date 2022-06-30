@@ -12,6 +12,7 @@ class ChessboardPattern {
 	void write(const char* outputFName) const;
 	void writeImage(const char* outputFName) const;
 	void read(const char* fName);  // From txt file
+	cv::Vec2f getCorner(const std::size_t idx) const;
 
    protected:
 	void readImage(const char* imageFName);
