@@ -66,7 +66,7 @@ void ChessboardPattern::writeImage(const char* outputFName) const {
 void ChessboardPattern::read(const char* fName) {
 	clear();
 
-	std::fstream ifs(fName, std::fstream::out);
+	std::fstream ifs(fName, std::fstream::in);
 
 	ifs.ignore(1024, '\n');
 	ifs >> m_Size.width >> m_Size.height;
