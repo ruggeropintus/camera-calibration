@@ -16,7 +16,7 @@ void CameraCalibration::run() {
 	m_RmsRProjError = cv::calibrateCamera(
 		objectPoints, imagePoints, m_ImageSize, m_CameraMatrix, m_DistCoeffs,
 		m_RVecs, m_TVecs, m_StdDeviationsIntrinsics, m_StdDeviationsExtrinsics,
-		m_PerViewErrors);  // FIXME: study proper flags
+		m_PerViewErrors, m_CalibrationFlags);
 }
 
 void CameraCalibration::loadChessboardPatterns(const char** viewsFNames,

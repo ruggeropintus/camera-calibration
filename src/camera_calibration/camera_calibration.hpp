@@ -20,6 +20,7 @@ class CameraCalibration {
 	}
 	void loadChessboardPatterns(const char** viewsFNames,
 								const std::size_t viewsCount);
+	void setCalibrationFlags(const int flags) { m_CalibrationFlags = flags; };
 
    private:
 	std::vector<std::vector<cv::Vec3f>> computeObjectPoints() const;
@@ -46,9 +47,19 @@ class CameraCalibration {
 	cv::Mat m_StdDeviationsIntrinsics;
 	cv::Mat m_StdDeviationsExtrinsics;
 	cv::Mat m_PerViewErrors;
+	int m_CalibrationFlags = 0;
 	double m_RmsRProjError;
 
 	const char** m_ViewsFNames = nullptr;
+
+   public:
+	enum CalibrationFlag {
+		DEFAULT = 0,
+		RATIONAL = cv::CALIB_RATIONAL_MODEL,
+		THIN_PRISM = cv::CALIB_RATIONAL_MODEL | cv::CALIB_THIN_PRISM_MODEL,
+		TILTED = cv::CALIB_RATIONAL_MODEL | cv::CALIB_THIN_PRISM_MODEL |
+				 cv::CALIB_TILTED_MODEL
+	};
 };
 
 }  // namespace camera_calibration
